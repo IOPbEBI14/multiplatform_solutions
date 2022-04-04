@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:web_application/data/app_platform.dart';
+import '../data/what_ta_fck.dart'
+    if (dart.library.io) 'package:web_application/data/non_web_platform_webview.dart'
+    if (dart.library.html) 'package:web_application/data/web_platform_webview.dart'
+    as multiplatform;
 
 import '../data/load_data.dart';
+import '../data/site_info.dart';
 
 class MyHomeView extends StatefulWidget {
   const MyHomeView({Key? key}) : super(key: key);
@@ -12,6 +18,7 @@ class MyHomeView extends StatefulWidget {
 class _MyHomeViewState extends State<MyHomeView> {
   final inputController = TextEditingController();
   String siteUrl = '';
+  late Future<SiteInfo> siteInfo = LoadData('').getData();
 
   @override
   void dispose() {
@@ -21,6 +28,7 @@ class _MyHomeViewState extends State<MyHomeView> {
 
   void _updateForm(String value) {
     setState(() {
+      siteInfo = LoadData(value).getData();
       siteUrl = value;
     });
   }
@@ -28,10 +36,11 @@ class _MyHomeViewState extends State<MyHomeView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: LoadData(siteUrl).getData(),
+        future: siteInfo,
         builder: (context, AsyncSnapshot snapshot) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               AppBar(
                   title: Center(
@@ -54,19 +63,18 @@ class _MyHomeViewState extends State<MyHomeView> {
                 ),
               ),
               Expanded(
-                  flex: 5,
-                  child: Center(
-                      child: SingleChildScrollView(
-                          child: (snapshot.connectionState ==
-                                      ConnectionState.active ||
-                                  snapshot.connectionState ==
-                                      ConnectionState.waiting)
-                              ? const CircularProgressIndicator()
-                              : snapshot.hasData
-                                  ? Text(snapshot.data.html)
-                                  : snapshot.hasError
-                                      ? Text(snapshot.error.toString())
-                                      : const Text('')))),
+                flex: 5,
+                child: Center(
+                  child: (snapshot.connectionState == ConnectionState.active ||
+                          snapshot.connectionState == ConnectionState.waiting)
+                      ? const CircularProgressIndicator()
+                      : snapshot.hasData
+                          ? multiplatform.webView(link: siteUrl)
+                          : snapshot.hasError
+                              ? Text(snapshot.error.toString())
+                              : const Text(''),
+                ),
+              ),
               SizedBox(
                 height: 5,
                 child: Container(
@@ -109,6 +117,11 @@ class _MyHomeViewState extends State<MyHomeView> {
                   ),
                 ],
               ),
+              Container(
+                  padding: const EdgeInsets.all(5),
+                  child: Center(
+                      child: Text(
+                          'Application running on ${AppPlatform.platform.toString()}')))
             ],
           );
         });
