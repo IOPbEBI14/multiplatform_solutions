@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:web_application/data/site_info.dart';
+import 'package:webview_application/data/site_info.dart';
 
 class LoadData {
   final String _url;

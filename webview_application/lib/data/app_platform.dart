@@ -13,4 +13,6 @@ class AppPlatform {
   }
 
   static String get platform => _getPlatform();
+
+  static bool get isMobile => platform == 'android' || platform == 'ios';
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:web_application/widgets/my_home_view.dart';
+import 'package:webview_application/widgets/my_home_view.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
