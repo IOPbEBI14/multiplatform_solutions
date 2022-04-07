@@ -29,18 +29,24 @@ class _ListviewLayoutState extends State<ListviewLayout> {
           decoration: BoxDecoration(
               color: Colors.lightBlue, borderRadius: BorderRadius.circular(15)),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Image.asset(
-                'assets/images/' + widget.hotelInfo.poster,
-                fit: BoxFit.fill,
-              ),
-              Center(
-                child: Text(
-                  widget.hotelInfo.name,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyText1,
+              Expanded(
+                child: Image.asset(
+                  'assets/images/' + widget.hotelInfo.poster,
+                  fit: BoxFit.fitHeight,
                 ),
+              ),
+              Expanded(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        widget.hotelInfo.name,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    ]),
               )
             ],
           ),

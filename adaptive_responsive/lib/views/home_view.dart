@@ -25,6 +25,7 @@ class _HomeViewState extends State<HomeView> {
       _hotels = Future.value(responce.data
           .map<HotelPreview>((hotel) => HotelPreview.fromJson(hotel))
           .toList());
+      setState(() {});
     } on DioError catch (e) {
       setState(() {
         _dioError = e.message;
@@ -35,23 +36,18 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return Scaffold(
-        // appBar: AppBar(title:  const Center(child:Text('Adaptive App')),shape: const RoundedRectangleBorder(
-        //   borderRadius: BorderRadius.vertical(
-        //     bottom: Radius.circular(15),
-        //   ),
-        // ),titleSpacing: 2,),
-        body: FutureBuilder(
-          future: _hotels,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting:
-                return const Center(child: CircularProgressIndicator());
-              case ConnectionState.done:
-                if (snapshot.hasError) {
-                  return Text(_dioError);
-                } else if (snapshot.hasData) {
+    return Scaffold(
+      body: FutureBuilder(
+        future: _hotels,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return const Center(child: CircularProgressIndicator());
+            case ConnectionState.done:
+              if (snapshot.hasError) {
+                return Text(_dioError);
+              } else if (snapshot.hasData) {
+                return LayoutBuilder(builder: (context, constraints) {
                   if (constraints.maxWidth < 720) {
                     return Column(
                       children: [
@@ -69,7 +65,6 @@ class _HomeViewState extends State<HomeView> {
                           height: 5,
                         ),
                         Expanded(
-                          //flex: 1,
                           child: ListView.separated(
                               itemCount: snapshot.data.length,
                               separatorBuilder:
@@ -124,16 +119,16 @@ class _HomeViewState extends State<HomeView> {
                       ],
                     );
                   }
-                } else {
-                  return const Center(child: CircularProgressIndicator());
-                }
-              default:
+                });
+              } else {
                 return const Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
-      );
-    });
+              }
+            default:
+              return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );
   }
 
   @override
